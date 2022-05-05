@@ -19,14 +19,14 @@ use std::collections::HashMap;
 const KEY: &str = "hash";
 const VALUE: &str = "me!";
 
-// Create a HashMap that use CityHash64 to hash keys
+// Create a HashMap that use SliceBy8Hasher to hash keys
 let mut map = HashMap::with_hasher(SliceBy8BuildHasher::default());
 map.insert(KEY, VALUE);
 
 assert_eq!(map.get(&KEY), Some(&VALUE));
 ```
 
-### Using Portable CityHash functions
+### Using Portable slice-by-8 functions
 Slice-by-8 provides functions to hash slice of bytes.
 
 ```rust ignore

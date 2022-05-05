@@ -21,8 +21,7 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 /// assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
 /// ```
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
-    // Slicing-by-8 intel algorithm
-    // http://slicing-by-8.sourceforge.net/
+    // Based on the Slicing-by-8 intel algorithm : http://slicing-by-8.sourceforge.net/
     // Alignement optimisation come from https://matt.sh/redis-crcspeed
     let mut crc = !seed;
 
