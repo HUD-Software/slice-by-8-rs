@@ -1,8 +1,8 @@
 use crate::lookup_table;
 
-/// Computes the CRC32c checksum for the specified buffer using the slicing by 8 
+/// Computes the CRC32 checksum for the specified buffer using the slicing by 8
 /// algorithm over 64 bit quantities.
-/// 
+///
 /// # Example
 /// ```
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
@@ -12,9 +12,9 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
     slice_by_8_with_seed(buf, 0)
 }
 
-/// Computes the CRC32c checksum for the specified buffer using the slicing by 8 
+/// Computes the CRC32 checksum for the specified buffer using the slicing by 8
 /// algorithm over 64 bit quantities, adding a seed to the result.
-/// 
+///
 /// # Example
 /// ```
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
@@ -67,20 +67,19 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
         (acc >> 8) ^ lookup_table::CRC32_LOOKUP[0][((acc ^ *byte as u32) & 0xff) as usize]
     })
 }
-
 #[cfg(test)]
 mod tests {
 
     #[test]
-    fn slice_by_8_no_seed(){
+    fn slice_by_8_no_seed() {
         // Miss align to be sure we handle this case
-        const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
+        const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
         assert_eq!(super::slice_by_8(HASH_ME), 0x4C2750BD);
     }
     #[test]
-    fn slice_by_8_with_seed(){
+    fn slice_by_8_with_seed() {
         // Miss align to be sure we handle this case
-        const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
+        const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
         assert_eq!(super::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
     }
 }

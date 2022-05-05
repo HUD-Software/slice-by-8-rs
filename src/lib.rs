@@ -1,11 +1,12 @@
 #![doc=include_str!("../README.md")]
 #![no_std]
 
-mod lookup_table;
 mod hasher;
-pub use hasher::*;
-mod slice_by_8;
-pub use crate::slice_by_8::*;
+mod lookup_table;
+pub use hasher::SliceBy8Hasher;
 
+mod crc32_hasher;
+pub use crc32_hasher::SliceBy8BuildHasher;
 
-
+mod crc32;
+pub use crc32::*;

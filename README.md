@@ -5,11 +5,12 @@ Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 
 [![Build](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml) 
 [![Test](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml)
-[![codecov](https://codecov.io/gh/HUD-Software/cityhash-sys/branch/master/graph/badge.svg?token=LTEI8LUT5R)](https://codecov.io/gh/HUD-Software/cityhash-sys) [![docs.rs](https://img.shields.io/docsrs/slice-by-8?style=plastic)](https://docs.rs/slice-by-8/latest/cityhash_sys/)
+[![codecov](https://codecov.io/gh/HUD-Software/slice-by-8/branch/main/graph/badge.svg?token=KG7SEUBDUF)](https://codecov.io/gh/HUD-Software/slice-by-8) [![docs.rs](https://img.shields.io/docsrs/slice-by-8?style=plastic)](https://docs.rs/slice-by-8/latest/cityhash_sys/)
 
 ## Introduction
 
-Slice-by-8 provides hash function that performs CRC32c hashing using improved variant of intel's [Slice-by-8](http://slicing-by-8.sourceforge.net/) algorithm.
+Slice-by-8 provides hash function that performs CRC32 hashing using improved variant of intel's [Slice-by-8](http://slicing-by-8.sourceforge.net/) algorithm.
+Polynomial used in lookup table is 0x04c11db7.
 
 Slice-by-8 is tested on little-endian but should work on big-endian architecture.
 
@@ -17,7 +18,7 @@ Slice-by-8 is tested on little-endian but should work on big-endian architecture
 
 ### Using Hasher
 ```rust
-use slice_by_8::SliceBy8BuildHasher;
+use slice_by_8::crc32::SliceBy8BuildHasher;
 use std::collections::HashMap;
 const KEY: &str = "hash";
 const VALUE: &str = "me!";
@@ -47,6 +48,7 @@ Improvement are based on :
 * [Unreal Engine 4](https://github.com/EpicGames/UnrealEngine/)
 
 ## TODO
+- [ ] Select CRC32 or CRC32C version (https://crccalc.com/)
 - [ ] Lookup table value tested
 - [ ] ARM intrinsics version
 - [ ] Intel intrinsics version   
