@@ -1,8 +1,11 @@
-# Slice-by-8
+# Slice-by-8 [![Crates.io](https://img.shields.io/crates/v/slice-by-8?style=plastic)](https://crates.io/crates/slice-by-8) [![Crates.io](https://img.shields.io/crates/l/slice-by-8?style=plastic)](https://choosealicense.com/licenses/mit/)
 
-Rust improved implementation of the [Slice-by-8](http://slicing-by-8.sourceforge.net/) intel algorithm.
-
+Rust improved implementation of the [Slice-by-8](http://slicing-by-8.sourceforge.net/) intel algorithm.  
 Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
+
+[![Build](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml) 
+[![Test](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml)
+[![codecov](https://codecov.io/gh/HUD-Software/cityhash-sys/branch/master/graph/badge.svg?token=LTEI8LUT5R)](https://codecov.io/gh/HUD-Software/cityhash-sys) [![docs.rs](https://img.shields.io/docsrs/slice-by-8?style=plastic)](https://docs.rs/slice-by-8/latest/cityhash_sys/)
 
 ## Introduction
 
