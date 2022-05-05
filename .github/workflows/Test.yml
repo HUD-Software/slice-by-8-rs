@@ -1,0 +1,38 @@
+name: Test
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Cinstrument-coverage"
+  LLVM_PROFILE_FILE: "slice-by-8-%p-%m.profraw"
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Setup Rust
+      run: |
+          rustup toolchain add nightly --component llvm-tools-preview
+          rustup override set nightly
+          cargo install grcov
+    - name: Build
+      run: cargo build --release --verbose
+    - name: Test
+      run: cargo test --release --verbose
+    - name: Generate coverage
+      run: |
+              grcov $(find . -name "slice-by-8-*.profraw" -print) \
+              --branch \
+              --ignore-not-existing \
+              --binary-path ./target/release/ \
+              -s . \
+              -t lcov \
+              --ignore "/*" \
+              --ignore build.rs \
+              -o lcov.info
+    - name: Upload report to codecov
+      uses: codecov/codecov-action@v2
+

@@ -1,0 +1,26 @@
+name: Build
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+          include:
+            - os: macos-latest
+              target: x86_64-apple-darwin
+            - os: ubuntu-latest
+              target: x86_64-unknown-linux-gnu
+            - os: windows-latest
+              target: x86_64-pc-windows-msvc
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Rust
+        run:  rustup target add ${{ matrix.target }}
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
