@@ -29,7 +29,7 @@ map.insert(KEY, VALUE);
 assert_eq!(map.get(&KEY), Some(&VALUE));
 ```
 
-### Using Portable slice-by-8 functions
+### Using slice-by-8 functions
 Slice-by-8 provides functions to hash slice of bytes.
 
 ```rust ignore
