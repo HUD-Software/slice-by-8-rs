@@ -1,12 +1,13 @@
 # Slice-by-8
 
-Rust implementation of the [Slice-by-8](http://slicing-by-8.sourceforge.net/) intel algorithm.
-It provides an improved version of the original intel slice-by-8.
+Rust improved implementation of the [Slice-by-8](http://slicing-by-8.sourceforge.net/) intel algorithm.
+
 Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 
 ## Introduction
 
 Slice-by-8 provides hash function that performs CRC32c hashing using improved variant of intel's [Slice-by-8](http://slicing-by-8.sourceforge.net/) algorithm.
+
 Slice-by-8 is tested on little-endian but should work on big-endian architecture.
 
 ## Usage
