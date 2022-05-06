@@ -355,6 +355,7 @@ mod tests {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
         assert_eq!(crc32::slice_by_8(HASH_ME), 0x4C2750BD);
     }
+    
     #[test]
     fn slice_by_8_with_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";

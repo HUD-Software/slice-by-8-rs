@@ -9,7 +9,7 @@ Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 ## Introduction
 
 Slice-by-8 crate provides function that performs CRC32 and CRC32c hashing using improved variant of intel's [Slice-by-8](http://slicing-by-8.sourceforge.net/) algorithm.
-The crate provides the general slice-by-8 algorithm that take the loopup table to use if you want to use you own lookup table.
+The crate provides the slice-by-8 algorithm that take the loopup table to use as parameter if you want to use your own.
 The crate also provides the CRC32 (Polynomial `0x04c11db7` ) available in `slice_by_8::crc32` and the CRC32c (Polynomial `0x1EDC6F41` ) in `slice_by_8::crc32c`.
 
 ## Usage
