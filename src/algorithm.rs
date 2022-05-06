@@ -5,6 +5,8 @@
 //! Adapation from <https://create.stephan-brumme.com/crc32/>
 //! LookUpTable generated with polynomial 0x04c11db7
 
+use core::mem::MaybeUninit;
+
 /// Computes the CRC checksum for the specified buffer using the slicing by 8
 /// algorithm over 64 bit quantities.
 ///
@@ -78,20 +80,54 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
     })
 }
 
+/// Generate a lookup table.
+/// The given polynomial is reversed before the generation
+/// 
+/// # Example
+/// ```
+/// use slice_by_8::{crc32,generate_table};
+/// 
+/// assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::CRC32_LOOKUP_TABLE);
+/// ```
+pub fn generate_table(polynomial: u32) -> [[u32;256];8] {
+    let mut generated_lookup_table= MaybeUninit::<[[u32; 256]; 8]>::uninit();
+
+    unsafe {
+        for i in 0..=0xFF {
+            let mut crc: u32 = i;
+            for _ in 0..8 {
+                crc = (crc >> 1) ^ ((crc & 1) * polynomial.reverse_bits());
+            }
+            generated_lookup_table.assume_init_mut()[0][i as usize] = crc;
+        }
+
+        for i in 0..=0xFF {
+            generated_lookup_table.assume_init_mut()[1][i] = (generated_lookup_table.assume_init()[0][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[0][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[2][i] = (generated_lookup_table.assume_init()[1][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[1][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[3][i] = (generated_lookup_table.assume_init()[2][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[2][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[4][i] = (generated_lookup_table.assume_init()[3][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[3][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[5][i] = (generated_lookup_table.assume_init()[4][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[4][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[6][i] = (generated_lookup_table.assume_init()[5][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[5][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[7][i] = (generated_lookup_table.assume_init()[6][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[6][i] & 0xFF) as usize];
+        }
+        *generated_lookup_table.assume_init_mut()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate as slice_by_8;
-    use crate::crc32::CRC32_LOOKUP;
+    use crate::crc32::CRC32_LOOKUP_TABLE;
 
     #[test]
     fn slice_by_8_no_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(slice_by_8::slice_by_8(HASH_ME, &CRC32_LOOKUP), 0x4C2750BD);
+        assert_eq!(slice_by_8::slice_by_8(HASH_ME, &CRC32_LOOKUP_TABLE), 0x4C2750BD);
     }
 
     #[test]
     fn slice_by_8_with_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &CRC32_LOOKUP), 0xEADB5034);
+        assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &CRC32_LOOKUP_TABLE), 0xEADB5034);
     }
 }

@@ -1,7 +1,9 @@
 mod hasher;
 pub use hasher::{CRC32BuildHasher, CRC32Hasher};
 
-pub const CRC32_LOOKUP: [[u32; 256]; 8] = [
+pub const POLYNOMIAL:u32 = 0x04c11db7;
+
+pub const CRC32_LOOKUP_TABLE: [[u32; 256]; 8] = [
     [
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535,
         0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd,
@@ -343,12 +345,12 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 /// ```
 #[inline(always)]
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
-    crate::slice_by_8_with_seed(buf, seed, &CRC32_LOOKUP)
+    crate::slice_by_8_with_seed(buf, seed, &CRC32_LOOKUP_TABLE)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::crc32;
+    use crate::{crc32, generate_table};
 
     #[test]
     fn slice_by_8_no_seed() {
@@ -361,4 +363,36 @@ mod tests {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
         assert_eq!(crc32::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
     }
+
+    #[test]
+    fn lookup_table_is_correct(){
+        assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::CRC32_LOOKUP_TABLE);
+    }
 }
+
+// for (unsigned int i = 0; i <= 0xFF; i++) { 
+//     uint32_t crc = i;   
+//     for (unsigned int j = 0; j < 8; j++) {
+//         crc = (crc >> 1) ^ ((crc & 1) * Memory::reverse_bits(Polynomial));
+//     }
+//     GeneratedCrc32Lookup[0][i] = crc;
+// }
+
+// for (unsigned int i = 0; i <= 0xFF; i++) {   
+//     GeneratedCrc32Lookup[1][i] = (GeneratedCrc32Lookup[0][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[0][i] & 0xFF];
+//     GeneratedCrc32Lookup[2][i] = (GeneratedCrc32Lookup[1][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[1][i] & 0xFF];
+//     GeneratedCrc32Lookup[3][i] = (GeneratedCrc32Lookup[2][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[2][i] & 0xFF];
+//     GeneratedCrc32Lookup[4][i] = (GeneratedCrc32Lookup[3][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[3][i] & 0xFF];
+//     GeneratedCrc32Lookup[5][i] = (GeneratedCrc32Lookup[4][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[4][i] & 0xFF];
+//     GeneratedCrc32Lookup[6][i] = (GeneratedCrc32Lookup[5][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[5][i] & 0xFF];
+//     GeneratedCrc32Lookup[7][i] = (GeneratedCrc32Lookup[6][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[6][i] & 0xFF];
+// }
+
+// // Assert that all values in the lookup table are corrects
+// for (u32 i = 0; i < 8; i++) {
+//     for (u32 j = 0; j < 256; j++) {
+//         assert(GeneratedCrc32Lookup[i][j] == Crc32Lookup[i][j]);
+//     }
+// }
+// // Compare with the static lookup table
+// return Memory::compare_equal(Crc32Lookup, GeneratedCrc32Lookup);
