@@ -1,10 +1,6 @@
-/**
- * This CRC implementation is based on slice-by-8 intel algorithm from the paper
- * "A Systematic Approach to building High Performance, Software-based, CRC Generators"
- * By Intel Researche and Development"
- * Adapation from https://create.stephan-brumme.com/crc32/
- * LookUpTable generated with polynomial 0x04c11db7
- */
+mod hasher;
+pub use hasher::{CRC32BuildHasher, CRC32Hasher};
+
 pub const CRC32_LOOKUP: [[u32; 256]; 8] = [
     [
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535,
@@ -325,8 +321,10 @@ pub const CRC32_LOOKUP: [[u32; 256]; 8] = [
 ///
 /// # Example
 /// ```
+/// use slice_by_8::crc32;
+///
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-/// assert_eq!(slice_by_8::crc32::slice_by_8(HASH_ME), 0x4C2750BD);
+/// assert_eq!(crc32::slice_by_8(HASH_ME), 0x4C2750BD);
 /// ```
 pub fn slice_by_8(buf: &[u8]) -> u32 {
     slice_by_8_with_seed(buf, 0)
@@ -337,69 +335,27 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 ///
 /// # Example
 /// ```
+/// use slice_by_8::crc32;
+///
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-/// assert_eq!(slice_by_8::crc32::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
+/// assert_eq!(crc32::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
 /// ```
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
-    // Based on the Slicing-by-8 intel algorithm : http://slicing-by-8.sourceforge.net/
-    // Alignement optimisation come from https://matt.sh/redis-crcspeed
-    let mut crc = !seed;
-
-    // Consume all bits until we are 8 bits aligned
-    let (prefix, shorts, suffix) = unsafe { buf.align_to::<u64>() };
-    crc = prefix.iter().fold(crc, |acc, byte| {
-        CRC32_LOOKUP[0][((acc ^ *byte as u32) & 0xff) as usize] ^ (acc >> 8)
-    });
-
-    // Process eight bytes at once (Slicing-by-8)
-    crc = shorts.iter().fold(crc, |acc, bytes| {
-        if cfg!(target_endian = "big") {
-            // Maybe inverse?
-            let (low, high) = (
-                (*bytes as u32) ^ acc.reverse_bits(),
-                (*bytes >> u32::BITS) as u32,
-            );
-            CRC32_LOOKUP[0][(high & 0xFF) as usize]
-                ^ CRC32_LOOKUP[1][((high >> 8) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[2][((high >> 16) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[3][((high >> 24) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[4][(low & 0xFF) as usize]
-                ^ CRC32_LOOKUP[5][((low >> 8) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[6][((low >> 16) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[7][((low >> 24) & 0xFF) as usize]
-        }
-        // cfg!(target_endian = "little")
-        else {
-            let (low, high) = ((*bytes as u32) ^ acc, (*bytes >> u32::BITS) as u32);
-            CRC32_LOOKUP[0][((high >> 24) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[1][((high >> 16) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[2][((high >> 8) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[3][(high & 0xFF) as usize]
-                ^ CRC32_LOOKUP[4][((low >> 24) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[5][((low >> 16) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[6][((low >> 8) & 0xFF) as usize]
-                ^ CRC32_LOOKUP[7][(low & 0xFF) as usize]
-        }
-    });
-
-    // Consume remaining 1 to 7 bytes (standard algorithm)
-    !suffix.iter().fold(crc, |acc, byte| {
-        (acc >> 8) ^ CRC32_LOOKUP[0][((acc ^ *byte as u32) & 0xff) as usize]
-    })
+    crate::slice_by_8_with_seed(buf, seed, &CRC32_LOOKUP)
 }
+
 #[cfg(test)]
 mod tests {
+    use crate::crc32;
 
     #[test]
     fn slice_by_8_no_seed() {
-        // Miss align to be sure we handle this case
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(super::slice_by_8(HASH_ME), 0x4C2750BD);
+        assert_eq!(crc32::slice_by_8(HASH_ME), 0x4C2750BD);
     }
     #[test]
     fn slice_by_8_with_seed() {
-        // Miss align to be sure we handle this case
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(super::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
+        assert_eq!(crc32::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
     }
 }
