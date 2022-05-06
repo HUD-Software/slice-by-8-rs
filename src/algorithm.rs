@@ -15,6 +15,7 @@
 ///
 /// assert_eq!(slice_by_8(HASH_ME, &MY_LOOKUP_TABLE), 0x...);
 /// ```
+#[inline(always)]
 pub fn slice_by_8(buf: &[u8], lookup_table: &[[u32; 256]; 8]) -> u32 {
     slice_by_8_with_seed(buf, 0, lookup_table)
 }
@@ -39,24 +40,27 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
     });
 
     // Process eight bytes at once (Slicing-by-8)
-    crc = shorts.iter().fold(crc, |acc, bytes| {
-        if cfg!(target_endian = "big") {
-            let (low, high) = (
-                (*bytes as u32) ^ acc.reverse_bits(),
-                (*bytes >> u32::BITS) as u32,
-            );
-            lookup_table[0][(high & 0xFF) as usize]
-                ^ lookup_table[1][((high >> 8) & 0xFF) as usize]
-                ^ lookup_table[2][((high >> 16) & 0xFF) as usize]
-                ^ lookup_table[3][((high >> 24) & 0xFF) as usize]
-                ^ lookup_table[4][(low & 0xFF) as usize]
-                ^ lookup_table[5][((low >> 8) & 0xFF) as usize]
-                ^ lookup_table[6][((low >> 16) & 0xFF) as usize]
-                ^ lookup_table[7][((low >> 24) & 0xFF) as usize]
-        }
-        // cfg!(target_endian = "little")
-        else {
-            let (low, high) = ((*bytes as u32) ^ acc, (*bytes >> u32::BITS) as u32);
+    #[cfg(target_endian = "big")]
+    let process_8_bytes_at_once = |acc:u32, byte:&u64| {
+        let byte = *byte;
+        let (low, high) = (
+            (byte as u32) ^ acc.reverse_bits(),
+            (byte >> u32::BITS) as u32,
+        );
+        lookup_table[0][(high & 0xFF) as usize]
+            ^ lookup_table[1][((high >> 8) & 0xFF) as usize]
+            ^ lookup_table[2][((high >> 16) & 0xFF) as usize]
+            ^ lookup_table[3][((high >> 24) & 0xFF) as usize]
+            ^ lookup_table[4][(low & 0xFF) as usize]
+            ^ lookup_table[5][((low >> 8) & 0xFF) as usize]
+            ^ lookup_table[6][((low >> 16) & 0xFF) as usize]
+            ^ lookup_table[7][((low >> 24) & 0xFF) as usize]
+    };
+
+    #[cfg(target_endian = "little")]
+    let process_8_bytes_at_once = |acc:u32, byte:&u64| {
+        let byte = *byte;
+        let (low, high) = ((byte as u32) ^ acc, (byte >> u32::BITS) as u32);
             lookup_table[0][((high >> 24) & 0xFF) as usize]
                 ^ lookup_table[1][((high >> 16) & 0xFF) as usize]
                 ^ lookup_table[2][((high >> 8) & 0xFF) as usize]
@@ -65,11 +69,29 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
                 ^ lookup_table[5][((low >> 16) & 0xFF) as usize]
                 ^ lookup_table[6][((low >> 8) & 0xFF) as usize]
                 ^ lookup_table[7][(low & 0xFF) as usize]
-        }
-    });
+    };
+    crc = shorts.iter().fold(crc, process_8_bytes_at_once);
 
     // Consume remaining 1 to 7 bytes (standard algorithm)
     !suffix.iter().fold(crc, |acc, byte| {
         (acc >> 8) ^ lookup_table[0][((acc ^ *byte as u32) & 0xff) as usize]
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use crate as slice_by_8;
+    use crate::crc32::CRC32_LOOKUP;
+
+    #[test]
+    fn slice_by_8_no_seed() {
+        const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
+        assert_eq!(slice_by_8::slice_by_8(HASH_ME, &CRC32_LOOKUP), 0x4C2750BD);
+    }
+
+    #[test]
+    fn slice_by_8_with_seed() {
+        const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
+        assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &CRC32_LOOKUP), 0xEADB5034);
+    }
 }

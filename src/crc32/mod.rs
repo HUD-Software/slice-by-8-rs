@@ -326,6 +326,7 @@ pub const CRC32_LOOKUP: [[u32; 256]; 8] = [
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 /// assert_eq!(crc32::slice_by_8(HASH_ME), 0x4C2750BD);
 /// ```
+#[inline(always)]
 pub fn slice_by_8(buf: &[u8]) -> u32 {
     slice_by_8_with_seed(buf, 0)
 }
@@ -340,6 +341,7 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 /// assert_eq!(crc32::slice_by_8_with_seed(HASH_ME, 123456789), 0xEADB5034);
 /// ```
+#[inline(always)]
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
     crate::slice_by_8_with_seed(buf, seed, &CRC32_LOOKUP)
 }
