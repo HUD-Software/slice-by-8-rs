@@ -1,31 +1,45 @@
 use core::hash::{Hasher, BuildHasher, BuildHasherDefault};
-use crate::{crc32::slice_by_8_with_seed, SliceBy8Hasher};
+use crate::crc32::slice_by_8_with_seed;
 
-impl Hasher for SliceBy8Hasher {
+/// Slice-By-8 hasher
+#[derive(Debug, Default)]
+pub struct CRC32Hasher {
+    key: u32,
+}
+
+
+impl CRC32Hasher {
+    /// Create a new [CRC32Hasher] initiated with a hash key
+    pub fn with_seed(seed: u32) -> CRC32Hasher {
+        CRC32Hasher { key: seed }
+    }
+}
+
+impl Hasher for CRC32Hasher {
     /// Returns the hash value for the values written so far.
     ///
     /// # Example
     ///
     /// ```
-    /// use slice_by_8::SliceBy8Hasher;
+    /// use slice_by_8::CRC32Hasher;
     /// use core::hash::Hasher;
     ///
-    /// let hasher = SliceBy8Hasher::with_seed(0x4C2750BD);
+    /// let hasher = CRC32Hasher::with_seed(0x4C2750BD);
     /// assert_eq!(hasher.finish(), 0x4C2750BD);
     /// ```
     fn finish(&self) -> u64 {
         self.key as u64
     }
 
-    /// Writes some data into the [SliceBy8Hasher].
+    /// Writes some data into the [CRC32Hasher].
     ///
     /// # Example
     ///
     /// ```
-    /// use slice_by_8::SliceBy8Hasher;
+    /// use slice_by_8::CRC32Hasher;
     /// use core::hash::Hasher;
     ///
-    /// let mut hasher = SliceBy8Hasher::default();
+    /// let mut hasher = CRC32Hasher::default();
     /// hasher.write(b"hash me!");
     /// ```
     fn write(&mut self, bytes: &[u8]) {
@@ -33,41 +47,40 @@ impl Hasher for SliceBy8Hasher {
     }
 }
 
-impl BuildHasher for SliceBy8Hasher {
-    type Hasher = SliceBy8Hasher;
+impl BuildHasher for CRC32Hasher {
+    type Hasher = CRC32Hasher;
 
-    /// Creates a new [SliceBy8Hasher].
+    /// Creates a new [CRC32Hasher].
     fn build_hasher(&self) -> Self::Hasher {
-        SliceBy8Hasher::default()
+        CRC32Hasher::default()
     }
 }
 
-/// A builder for default [SliceBy8Hasher].
-pub type SliceBy8BuildHasher = BuildHasherDefault<SliceBy8Hasher>;
+/// A builder for default [CRC32Hasher].
+pub type CRC32BuildHasher = BuildHasherDefault<CRC32Hasher>;
 
 #[cfg(test)]
 mod tests {
 
     use core::hash::{Hasher, BuildHasher};
+    use super::{CRC32Hasher,CRC32BuildHasher};
     use crate::crc32;
-    use super::SliceBy8Hasher;
-    use super::crc32::SliceBy8BuildHasher;
 
     #[test]
     fn hasher_default() {
-        let hasher = SliceBy8Hasher::default();
+        let hasher = CRC32Hasher::default();
         assert_eq!(hasher.finish(), 0);
     }
 
     #[test]
     fn hasher_with_seed() {
-        let hasher = SliceBy8Hasher::with_seed(0x9B9BEFFB);
+        let hasher = CRC32Hasher::with_seed(0x9B9BEFFB);
         assert_eq!(hasher.finish(), 0x9B9BEFFB);
     }
 
     #[test]
     fn build_hasher() {
-        let build_hasher = SliceBy8BuildHasher::default();
+        let build_hasher = CRC32Hasher::default();
         let mut hasher = build_hasher.build_hasher();
         hasher.write(b"abcdefghijklmnopqrstuvwxyz");
         assert_eq!(hasher.finish(), 0x4C2750BD);
@@ -75,7 +88,7 @@ mod tests {
 
     #[test]
     fn build_hasher_results_are_coherent_with_free_function() {
-        let build_hasher = SliceBy8BuildHasher::default();
+        let build_hasher = CRC32Hasher::default();
         let mut hasher = build_hasher.build_hasher();
 
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
@@ -98,7 +111,7 @@ mod tests {
             const HASH_ME: &str = "hash me!";
             const VALUE: &str = "Hi";
 
-            let mut map = HashMap::with_hasher(SliceBy8BuildHasher::default());
+            let mut map = HashMap::with_hasher(CRC32BuildHasher::default());
             map.insert(HASH_ME, VALUE);
             assert_eq!(map.get(&HASH_ME), Some(&VALUE));
         }
