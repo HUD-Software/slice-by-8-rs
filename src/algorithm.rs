@@ -4,7 +4,6 @@
 //! By Intel Researche and Development"
 //! Adapation from <https://create.stephan-brumme.com/crc32/>
 //! LookUpTable generated with polynomial 0x04c11db7
-
 use core::mem::MaybeUninit;
 
 /// Computes the CRC checksum for the specified buffer using the slicing by 8
@@ -87,7 +86,7 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
 /// ```
 /// use slice_by_8::{crc32,generate_table};
 /// 
-/// assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::CRC32_LOOKUP_TABLE);
+/// assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
 /// ```
 pub fn generate_table(polynomial: u32) -> [[u32;256];8] {
     let mut generated_lookup_table= MaybeUninit::<[[u32; 256]; 8]>::uninit();
@@ -117,17 +116,17 @@ pub fn generate_table(polynomial: u32) -> [[u32;256];8] {
 #[cfg(test)]
 mod tests {
     use crate as slice_by_8;
-    use crate::crc32::CRC32_LOOKUP_TABLE;
+    use slice_by_8::crc32::LOOKUP_TABLE;
 
     #[test]
     fn slice_by_8_no_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(slice_by_8::slice_by_8(HASH_ME, &CRC32_LOOKUP_TABLE), 0x4C2750BD);
+        assert_eq!(slice_by_8::slice_by_8(HASH_ME, &LOOKUP_TABLE), 0x4C2750BD);
     }
 
     #[test]
     fn slice_by_8_with_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &CRC32_LOOKUP_TABLE), 0xEADB5034);
+        assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &LOOKUP_TABLE), 0xEADB5034);
     }
 }

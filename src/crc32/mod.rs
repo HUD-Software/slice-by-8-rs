@@ -3,7 +3,7 @@ pub use hasher::{CRC32BuildHasher, CRC32Hasher};
 
 pub const POLYNOMIAL:u32 = 0x04c11db7;
 
-pub const CRC32_LOOKUP_TABLE: [[u32; 256]; 8] = [
+pub const LOOKUP_TABLE: [[u32; 256]; 8] = [
     [
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535,
         0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd,
@@ -345,7 +345,7 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 /// ```
 #[inline(always)]
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
-    crate::slice_by_8_with_seed(buf, seed, &CRC32_LOOKUP_TABLE)
+    crate::slice_by_8_with_seed(buf, seed, &LOOKUP_TABLE)
 }
 
 #[cfg(test)]
@@ -366,7 +366,7 @@ mod tests {
 
     #[test]
     fn lookup_table_is_correct(){
-        assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::CRC32_LOOKUP_TABLE);
+        assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
     }
 }
 

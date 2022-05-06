@@ -55,6 +55,18 @@ const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 assert_eq!(slice_by_8(HASH_ME, &MY_LOOKUP_TABLE), 0x...,);
 ```
 
+## Generate Lookup table
+
+The crate provide `generate_table` function to generate a lookup table from a polynomial.
+
+```rust
+use slice_by_8::generate_table;
+use slice_by_8::{crc32, crc32c};
+
+assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
+assert_eq!(generate_table(crc32c::POLYNOMIAL), crc32c::LOOKUP_TABLE);
+```
+
 ## Performance
 
 Improvement are based on :
