@@ -1,12 +1,11 @@
-use core::hash::{Hasher, BuildHasher, BuildHasherDefault};
 use crate::crc32::slice_by_8_with_seed;
+use core::hash::{BuildHasher, BuildHasherDefault, Hasher};
 
 /// Slice-By-8 hasher
 #[derive(Debug, Default)]
 pub struct CRC32Hasher {
     key: u32,
 }
-
 
 impl CRC32Hasher {
     /// Create a new [CRC32Hasher] initiated with a hash key
@@ -62,9 +61,9 @@ pub type CRC32BuildHasher = BuildHasherDefault<CRC32Hasher>;
 #[cfg(test)]
 mod tests {
 
-    use core::hash::{Hasher, BuildHasher};
-    use super::{CRC32Hasher,CRC32BuildHasher};
+    use super::{CRC32BuildHasher, CRC32Hasher};
     use crate::crc32;
+    use core::hash::{BuildHasher, Hasher};
 
     #[test]
     fn hasher_default() {
@@ -104,15 +103,15 @@ mod tests {
         assert_eq!(hasher.finish(), hash_free_function as u64);
     }
 
-        #[test]
-        fn hasher_is_usable_in_std_collections() {
-            extern crate std;
-            use std::collections::HashMap;
-            const HASH_ME: &str = "hash me!";
-            const VALUE: &str = "Hi";
+    #[test]
+    fn hasher_is_usable_in_std_collections() {
+        extern crate std;
+        use std::collections::HashMap;
+        const HASH_ME: &str = "hash me!";
+        const VALUE: &str = "Hi";
 
-            let mut map = HashMap::with_hasher(CRC32BuildHasher::default());
-            map.insert(HASH_ME, VALUE);
-            assert_eq!(map.get(&HASH_ME), Some(&VALUE));
-        }
+        let mut map = HashMap::with_hasher(CRC32BuildHasher::default());
+        map.insert(HASH_ME, VALUE);
+        assert_eq!(map.get(&HASH_ME), Some(&VALUE));
+    }
 }
