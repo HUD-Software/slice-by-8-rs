@@ -1,7 +1,7 @@
 mod hasher;
 pub use hasher::{CRC32BuildHasher, CRC32Hasher};
 
-pub const POLYNOMIAL:u32 = 0x04c11db7;
+pub const POLYNOMIAL: u32 = 0x04c11db7;
 
 pub const LOOKUP_TABLE: [[u32; 256]; 8] = [
     [
@@ -357,7 +357,7 @@ mod tests {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
         assert_eq!(crc32::slice_by_8(HASH_ME), 0x4C2750BD);
     }
-    
+
     #[test]
     fn slice_by_8_with_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
@@ -365,20 +365,20 @@ mod tests {
     }
 
     #[test]
-    fn lookup_table_is_correct(){
+    fn lookup_table_is_correct() {
         assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
     }
 }
 
-// for (unsigned int i = 0; i <= 0xFF; i++) { 
-//     uint32_t crc = i;   
+// for (unsigned int i = 0; i <= 0xFF; i++) {
+//     uint32_t crc = i;
 //     for (unsigned int j = 0; j < 8; j++) {
 //         crc = (crc >> 1) ^ ((crc & 1) * Memory::reverse_bits(Polynomial));
 //     }
 //     GeneratedCrc32Lookup[0][i] = crc;
 // }
 
-// for (unsigned int i = 0; i <= 0xFF; i++) {   
+// for (unsigned int i = 0; i <= 0xFF; i++) {
 //     GeneratedCrc32Lookup[1][i] = (GeneratedCrc32Lookup[0][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[0][i] & 0xFF];
 //     GeneratedCrc32Lookup[2][i] = (GeneratedCrc32Lookup[1][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[1][i] & 0xFF];
 //     GeneratedCrc32Lookup[3][i] = (GeneratedCrc32Lookup[2][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[2][i] & 0xFF];

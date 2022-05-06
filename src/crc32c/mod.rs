@@ -1,7 +1,7 @@
 mod hasher;
 pub use hasher::{CRC32CBuildHasher, CRC32CHasher};
 
-pub const POLYNOMIAL:u32 = 0x1EDC6F41;
+pub const POLYNOMIAL: u32 = 0x1EDC6F41;
 
 pub const LOOKUP_TABLE: [[u32; 256]; 8] = [
     [
@@ -350,7 +350,7 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::{crc32c,generate_table};
+    use crate::{crc32c, generate_table};
 
     #[test]
     fn slice_by_8_no_seed() {
@@ -364,7 +364,7 @@ mod tests {
     }
 
     #[test]
-    fn lookup_table_is_correct(){
+    fn lookup_table_is_correct() {
         assert_eq!(generate_table(crc32c::POLYNOMIAL), crc32c::LOOKUP_TABLE);
     }
 }

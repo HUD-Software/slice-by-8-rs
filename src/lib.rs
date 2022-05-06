@@ -2,9 +2,9 @@
 #![no_std]
 
 mod algorithm;
+pub use algorithm::generate_table;
 pub use algorithm::slice_by_8;
 pub use algorithm::slice_by_8_with_seed;
-pub use algorithm::generate_table;
 
 pub mod crc32;
 pub mod crc32c;

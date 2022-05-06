@@ -42,7 +42,7 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
 
     // Process eight bytes at once (Slicing-by-8)
     #[cfg(target_endian = "big")]
-    let process_8_bytes_at_once = |acc:u32, byte:&u64| {
+    let process_8_bytes_at_once = |acc: u32, byte: &u64| {
         let byte = *byte;
         let (low, high) = (
             (byte as u32) ^ acc.reverse_bits(),
@@ -59,17 +59,17 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
     };
 
     #[cfg(target_endian = "little")]
-    let process_8_bytes_at_once = |acc:u32, byte:&u64| {
+    let process_8_bytes_at_once = |acc: u32, byte: &u64| {
         let byte = *byte;
         let (low, high) = ((byte as u32) ^ acc, (byte >> u32::BITS) as u32);
-            lookup_table[0][((high >> 24) & 0xFF) as usize]
-                ^ lookup_table[1][((high >> 16) & 0xFF) as usize]
-                ^ lookup_table[2][((high >> 8) & 0xFF) as usize]
-                ^ lookup_table[3][(high & 0xFF) as usize]
-                ^ lookup_table[4][((low >> 24) & 0xFF) as usize]
-                ^ lookup_table[5][((low >> 16) & 0xFF) as usize]
-                ^ lookup_table[6][((low >> 8) & 0xFF) as usize]
-                ^ lookup_table[7][(low & 0xFF) as usize]
+        lookup_table[0][((high >> 24) & 0xFF) as usize]
+            ^ lookup_table[1][((high >> 16) & 0xFF) as usize]
+            ^ lookup_table[2][((high >> 8) & 0xFF) as usize]
+            ^ lookup_table[3][(high & 0xFF) as usize]
+            ^ lookup_table[4][((low >> 24) & 0xFF) as usize]
+            ^ lookup_table[5][((low >> 16) & 0xFF) as usize]
+            ^ lookup_table[6][((low >> 8) & 0xFF) as usize]
+            ^ lookup_table[7][(low & 0xFF) as usize]
     };
     crc = shorts.iter().fold(crc, process_8_bytes_at_once);
 
@@ -81,33 +81,58 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
 
 /// Generate a lookup table.
 /// The given polynomial is reversed before the generation
-/// 
+///
 /// # Example
 /// ```
 /// use slice_by_8::{crc32,generate_table};
-/// 
+///
 /// assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
 /// ```
-pub fn generate_table(polynomial: u32) -> [[u32;256];8] {
-    let mut generated_lookup_table= MaybeUninit::<[[u32; 256]; 8]>::uninit();
+pub fn generate_table(polynomial: u32) -> [[u32; 256]; 8] {
+    let mut generated_lookup_table = MaybeUninit::<[[u32; 256]; 8]>::uninit();
 
     unsafe {
-        for i in 0..=0xFF {
-            let mut crc: u32 = i;
-            for _ in 0..8 {
-                crc = (crc >> 1) ^ ((crc & 1) * polynomial.reverse_bits());
-            }
-            generated_lookup_table.assume_init_mut()[0][i as usize] = crc;
+
+        // Generate table 0
+        for (i, x) in generated_lookup_table.assume_init_mut()[0]
+            .iter_mut()
+            .enumerate()
+        {
+            *x = (0..8).fold(i as u32, |acc, _| {
+                (acc >> 1) ^ ((acc & 1) * polynomial.reverse_bits())
+            });
         }
 
-        for i in 0..=0xFF {
-            generated_lookup_table.assume_init_mut()[1][i] = (generated_lookup_table.assume_init()[0][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[0][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[2][i] = (generated_lookup_table.assume_init()[1][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[1][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[3][i] = (generated_lookup_table.assume_init()[2][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[2][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[4][i] = (generated_lookup_table.assume_init()[3][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[3][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[5][i] = (generated_lookup_table.assume_init()[4][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[4][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[6][i] = (generated_lookup_table.assume_init()[5][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[5][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[7][i] = (generated_lookup_table.assume_init()[6][i] >> 8) ^ generated_lookup_table.assume_init()[0][(generated_lookup_table.assume_init()[6][i] & 0xFF) as usize];
+        // Generate tables [1..=7]
+        for i in 0..=255 {
+            generated_lookup_table.assume_init_mut()[1][i] =
+                (generated_lookup_table.assume_init()[0][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[0][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[2][i] =
+                (generated_lookup_table.assume_init()[1][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[1][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[3][i] =
+                (generated_lookup_table.assume_init()[2][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[2][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[4][i] =
+                (generated_lookup_table.assume_init()[3][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[3][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[5][i] =
+                (generated_lookup_table.assume_init()[4][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[4][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[6][i] =
+                (generated_lookup_table.assume_init()[5][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[5][i] & 0xFF) as usize];
+            generated_lookup_table.assume_init_mut()[7][i] =
+                (generated_lookup_table.assume_init()[6][i] >> 8)
+                    ^ generated_lookup_table.assume_init()[0]
+                        [(generated_lookup_table.assume_init()[6][i] & 0xFF) as usize];
         }
         *generated_lookup_table.assume_init_mut()
     }
@@ -127,6 +152,9 @@ mod tests {
     #[test]
     fn slice_by_8_with_seed() {
         const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
-        assert_eq!(slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &LOOKUP_TABLE), 0xEADB5034);
+        assert_eq!(
+            slice_by_8::slice_by_8_with_seed(HASH_ME, 123456789, &LOOKUP_TABLE),
+            0xEADB5034
+        );
     }
 }

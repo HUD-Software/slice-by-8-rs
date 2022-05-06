@@ -77,6 +77,5 @@ Improvement are based on :
 
 ## TODO
 
-* [ ] Lookup table value tested
 * [ ] ARM intrinsics version
 * [ ] Intel intrinsics version
