@@ -92,7 +92,6 @@ pub fn generate_table(polynomial: u32) -> [[u32; 256]; 8] {
     let mut generated_lookup_table = MaybeUninit::<[[u32; 256]; 8]>::uninit();
 
     unsafe {
-
         // Generate table 0
         for (i, x) in generated_lookup_table.assume_init_mut()[0]
             .iter_mut()
@@ -103,36 +102,16 @@ pub fn generate_table(polynomial: u32) -> [[u32; 256]; 8] {
             });
         }
 
-        // Generate tables [1..=7]
-        for i in 0..=255 {
-            generated_lookup_table.assume_init_mut()[1][i] =
-                (generated_lookup_table.assume_init()[0][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[0][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[2][i] =
-                (generated_lookup_table.assume_init()[1][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[1][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[3][i] =
-                (generated_lookup_table.assume_init()[2][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[2][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[4][i] =
-                (generated_lookup_table.assume_init()[3][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[3][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[5][i] =
-                (generated_lookup_table.assume_init()[4][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[4][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[6][i] =
-                (generated_lookup_table.assume_init()[5][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[5][i] & 0xFF) as usize];
-            generated_lookup_table.assume_init_mut()[7][i] =
-                (generated_lookup_table.assume_init()[6][i] >> 8)
-                    ^ generated_lookup_table.assume_init()[0]
-                        [(generated_lookup_table.assume_init()[6][i] & 0xFF) as usize];
+        // Generate table 1..=7
+        let table_0 = &generated_lookup_table.assume_init()[0];
+        for i in 1..=7 {
+            let table_before = &generated_lookup_table.assume_init()[i - 1];
+            for (i, x) in generated_lookup_table.assume_init_mut()[i]
+                .iter_mut()
+                .enumerate()
+            {
+                *x = (table_before[i] >> 8) ^ table_0[(table_before[i] & 0xFF) as usize];
+            }
         }
         *generated_lookup_table.assume_init_mut()
     }
