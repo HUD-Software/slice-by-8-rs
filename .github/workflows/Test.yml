@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-Cinstrument-coverage"
+  RUSTFLAGS: "-Ctarget-feature=+sse4.2 -Cinstrument-coverage"
   LLVM_PROFILE_FILE: "slice-by-8-%p-%m.profraw"
 
 jobs:
