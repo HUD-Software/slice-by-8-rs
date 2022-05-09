@@ -344,8 +344,43 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 /// assert_eq!(crc32c::slice_by_8_with_seed(HASH_ME, 123456789), 0x183AE562);
 /// ```
 #[inline(always)]
+#[cfg(not(all(target_arch = "x86_64", target_feature = "sse4.2")))]
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
     crate::slice_by_8_with_seed(buf, seed, &LOOKUP_TABLE)
+}
+
+#[cfg(all(target_arch = "x86_64", target_feature = "sse4.2"))]
+fn crc32c_u8_instrinsic(crc: u32, data: u8) -> u32 {
+    unsafe { core::arch::x86_64::_mm_crc32_u8(crc, data) }
+}
+
+#[cfg(all(target_arch = "x86_64", target_feature = "sse4.2"))]
+fn crc32c_u64_instrinsic(crc: u32, data: u64) -> u32 {
+    unsafe { core::arch::x86_64::_mm_crc32_u64(crc as u64, data) as u32}
+}
+
+#[cfg(any(
+    all(target_arch = "x86_64", target_feature = "sse4.2"),
+    all(target_arch = "aarch64", target_feature = "crc")
+))]
+pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
+    let mut crc = !seed;
+
+    // Consume all bits until we are 8 bits aligned
+    let (prefix, shorts, suffix) = unsafe { buf.align_to::<u64>() };
+    crc = prefix.iter().fold(crc, |acc, byte| crc32c_u8_instrinsic(acc & 0xFF, *byte) ^ (acc >> 8));
+
+    // Process eight bytes at once (Slicing-by-8)
+    #[cfg(target_endian = "big")]
+    let process_8_bytes_at_once = |acc: u32, byte: &u64| crc32c_u64_instrinsic(acc, *byte);
+
+    #[cfg(target_endian = "little")]
+    let process_8_bytes_at_once = |acc: u32, byte: &u64| crc32c_u64_instrinsic(acc, *byte);
+
+    crc = shorts.iter().fold(crc, process_8_bytes_at_once);
+
+    // Consume remaining 1 to 7 bytes (standard algorithm)
+    !suffix.iter().fold(crc, |acc, byte| (acc >> 8) ^ crc32c_u8_instrinsic(acc & 0xFF, *byte) )
 }
 
 #[cfg(test)]
