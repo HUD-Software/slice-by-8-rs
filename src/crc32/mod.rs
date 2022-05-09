@@ -369,30 +369,3 @@ mod tests {
         assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
     }
 }
-
-// for (unsigned int i = 0; i <= 0xFF; i++) {
-//     uint32_t crc = i;
-//     for (unsigned int j = 0; j < 8; j++) {
-//         crc = (crc >> 1) ^ ((crc & 1) * Memory::reverse_bits(Polynomial));
-//     }
-//     GeneratedCrc32Lookup[0][i] = crc;
-// }
-
-// for (unsigned int i = 0; i <= 0xFF; i++) {
-//     GeneratedCrc32Lookup[1][i] = (GeneratedCrc32Lookup[0][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[0][i] & 0xFF];
-//     GeneratedCrc32Lookup[2][i] = (GeneratedCrc32Lookup[1][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[1][i] & 0xFF];
-//     GeneratedCrc32Lookup[3][i] = (GeneratedCrc32Lookup[2][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[2][i] & 0xFF];
-//     GeneratedCrc32Lookup[4][i] = (GeneratedCrc32Lookup[3][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[3][i] & 0xFF];
-//     GeneratedCrc32Lookup[5][i] = (GeneratedCrc32Lookup[4][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[4][i] & 0xFF];
-//     GeneratedCrc32Lookup[6][i] = (GeneratedCrc32Lookup[5][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[5][i] & 0xFF];
-//     GeneratedCrc32Lookup[7][i] = (GeneratedCrc32Lookup[6][i] >> 8) ^ GeneratedCrc32Lookup[0][GeneratedCrc32Lookup[6][i] & 0xFF];
-// }
-
-// // Assert that all values in the lookup table are corrects
-// for (u32 i = 0; i < 8; i++) {
-//     for (u32 j = 0; j < 256; j++) {
-//         assert(GeneratedCrc32Lookup[i][j] == Crc32Lookup[i][j]);
-//     }
-// }
-// // Compare with the static lookup table
-// return Memory::compare_equal(Crc32Lookup, GeneratedCrc32Lookup);
