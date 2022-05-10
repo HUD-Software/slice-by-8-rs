@@ -1,8 +1,23 @@
 mod hasher;
 pub use hasher::{CRC32BuildHasher, CRC32Hasher};
 
+/// Polynomial used to generate the [LOOKUP_TABLE]
+/// 
+/// # Example
+/// ```
+/// use slice_by_8::crc32;
+/// assert_eq!(crc32::POLYNOMIAL, 0x04c11db7)
+/// ```
 pub const POLYNOMIAL: u32 = 0x04c11db7;
 
+/// Lookup table generated with the [POLYNOMIAL]
+/// 
+/// # Example
+/// ```
+/// use slice_by_8::{crc32,generate_table};
+///
+/// assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
+/// ```
 pub const LOOKUP_TABLE: [[u32; 256]; 8] = [
     [
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535,

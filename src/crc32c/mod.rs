@@ -1,8 +1,23 @@
 mod hasher;
 pub use hasher::{CRC32CBuildHasher, CRC32CHasher};
 
+/// Polynomial used to generate the [LOOKUP_TABLE]
+/// 
+/// # Example
+/// ```
+/// use slice_by_8::crc32c;
+/// assert_eq!(crc32c::POLYNOMIAL, 0x1EDC6F41)
+/// ```
 pub const POLYNOMIAL: u32 = 0x1EDC6F41;
 
+/// Lookup table generated with the [POLYNOMIAL]
+/// 
+/// # Example
+/// ```
+/// use slice_by_8::{crc32c,generate_table};
+///
+/// assert_eq!(generate_table(crc32c::POLYNOMIAL), crc32c::LOOKUP_TABLE);
+/// ```
 pub const LOOKUP_TABLE: [[u32; 256]; 8] = [
     [
         0x00000000, 0xF26B8303, 0xE13B70F7, 0x1350F3F4, 0xC79A971F, 0x35F1141C, 0x26A1E7E8,
@@ -344,43 +359,61 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 /// assert_eq!(crc32c::slice_by_8_with_seed(HASH_ME, 123456789), 0x183AE562);
 /// ```
 #[inline(always)]
-#[cfg(not(all(target_arch = "x86_64", target_feature = "sse4.2")))]
+#[cfg(not(any(
+    all(target_arch = "x86_64", target_feature = "sse4.2"),
+    all(target_arch = "aarch64", target_feature = "crc")
+)))]
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
     crate::slice_by_8_with_seed(buf, seed, &LOOKUP_TABLE)
 }
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse4.2"))]
-fn crc32c_u8_instrinsic(crc: u32, data: u8) -> u32 {
-    unsafe { core::arch::x86_64::_mm_crc32_u8(crc, data) }
-}
-
-#[cfg(all(target_arch = "x86_64", target_feature = "sse4.2"))]
-fn crc32c_u64_instrinsic(crc: u32, data: u64) -> u32 {
-    unsafe { core::arch::x86_64::_mm_crc32_u64(crc as u64, data) as u32}
-}
-
-#[cfg(any(
-    all(target_arch = "x86_64", target_feature = "sse4.2"),
-    all(target_arch = "aarch64", target_feature = "crc")
-))]
+#[cfg(target_feature = "sse4.2")]
 pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
     let mut crc = !seed;
 
     // Consume all bits until we are 8 bits aligned
     let (prefix, shorts, suffix) = unsafe { buf.align_to::<u64>() };
-    crc = prefix.iter().fold(crc, |acc, byte| crc32c_u8_instrinsic(acc & 0xFF, *byte) ^ (acc >> 8));
+    crc = prefix.iter().fold(
+        crc,
+        |acc, byte| unsafe { core::arch::x86_64::_mm_crc32_u8(acc & 0xFF, *byte) } ^ (acc >> 8),
+    );
 
     // Process eight bytes at once (Slicing-by-8)
-    #[cfg(target_endian = "big")]
-    let process_8_bytes_at_once = |acc: u32, byte: &u64| crc32c_u64_instrinsic(acc, *byte);
-
-    #[cfg(target_endian = "little")]
-    let process_8_bytes_at_once = |acc: u32, byte: &u64| crc32c_u64_instrinsic(acc, *byte);
+    let process_8_bytes_at_once = |acc: u32, byte: &u64| unsafe {
+        core::arch::x86_64::_mm_crc32_u64(acc as u64, *byte) as u32
+    };
 
     crc = shorts.iter().fold(crc, process_8_bytes_at_once);
 
     // Consume remaining 1 to 7 bytes (standard algorithm)
-    !suffix.iter().fold(crc, |acc, byte| (acc >> 8) ^ crc32c_u8_instrinsic(acc & 0xFF, *byte) )
+    !suffix.iter().fold(crc, |acc, byte| {
+        (acc >> 8) ^ unsafe { core::arch::x86_64::_mm_crc32_u8(acc & 0xFF, *byte) }
+    })
+}
+
+#[cfg(all(target_arch = "aarch64", target_feature = "crc"))]
+#[cfg(target_feature = "crc")]
+pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
+    let mut crc = !seed;
+
+    // Consume all bits until we are 8 bits aligned
+    let (prefix, shorts, suffix) = unsafe { buf.align_to::<u64>() };
+    crc = prefix.iter().fold(
+        crc,
+        |acc, byte| unsafe { core::arch::aarch64::__crc32cb(acc & 0xFF, *byte) } ^ (acc >> 8),
+    );
+
+    // Process eight bytes at once (Slicing-by-8)
+    let process_8_bytes_at_once =
+        |acc: u32, byte: &u64| unsafe { core::arch::aarch64::__crc32cd(acc, *byte) as u32 };
+
+    crc = shorts.iter().fold(crc, process_8_bytes_at_once);
+
+    // Consume remaining 1 to 7 bytes (standard algorithm)
+    !suffix.iter().fold(crc, |acc, byte| {
+        (acc >> 8) ^ unsafe { core::arch::aarch64::__crc32cb(acc & 0xFF, *byte) }
+    })
 }
 
 #[cfg(test)]

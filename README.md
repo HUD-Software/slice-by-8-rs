@@ -46,13 +46,13 @@ assert_eq!(crc32c::slice_by_8(HASH_ME), 0x9EE6EF25);
 
 You own lookup table must be `[[u32; 256]; 8]`.
 
-```rust ignore
+```rust
 use slice_by_8::slice_by_8;
 
-const MY_LOOKUP_TABLE : &[[u32; 256]; 8] = [[...],[...],...];
+const MY_LOOKUP_TABLE : [[u32; 256]; 8] = slice_by_8::generate_table(slice_by_8::crc32::POLYNOMIAL);
 const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 
-assert_eq!(slice_by_8(HASH_ME, &MY_LOOKUP_TABLE), 0x...,);
+assert_eq!(slice_by_8(HASH_ME, &MY_LOOKUP_TABLE), 0x4C2750BD);
 ```
 
 ## Generate Lookup table
