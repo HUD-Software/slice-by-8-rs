@@ -49,10 +49,10 @@ You own lookup table must be `[[u32; 256]; 8]`.
 ```rust
 use slice_by_8::slice_by_8;
 
-const MY_LOOKUP_TABLE : [[u32; 256]; 8] = slice_by_8::generate_table(slice_by_8::crc32::POLYNOMIAL);
+let my_lookup_table: [[u32; 256]; 8] = slice_by_8::generate_table(slice_by_8::crc32::POLYNOMIAL);
 const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 
-assert_eq!(slice_by_8(HASH_ME, &MY_LOOKUP_TABLE), 0x4C2750BD);
+assert_eq!(slice_by_8(HASH_ME, &my_lookup_table), 0x4C2750BD);
 ```
 
 ## Generate Lookup table
