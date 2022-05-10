@@ -81,7 +81,7 @@ jobs:
           rustup override set nightly
           cargo install grcov
     - name: Build
-      run: cargo build --release --verbose
+      run: cargo build --target=aarch64-unknown-linux-gnu --release --verbose
     - name: Test
       run: cargo test --release --verbose
     - name: Generate coverage
