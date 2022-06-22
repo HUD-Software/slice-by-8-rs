@@ -1,6 +1,6 @@
 #![doc=include_str!("../README.md")]
 #![no_std]
-#![feature(stdsimd)]
+#![cfg_attr(target_feature = "crc", feature(stdsimd))]
 
 mod algorithm;
 pub use algorithm::generate_table;
