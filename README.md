@@ -8,9 +8,10 @@ Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 
 ## Introduction
 
-Slice-by-8 crate provides function that performs CRC32 and CRC32c hashing using improved variant of intel's [Slice-by-8](http://slicing-by-8.sourceforge.net/) algorithm.
+Slice-by-8 crate provides function that performs CRC hashing using improved variant of intel's [Slice-by-8](http://slicing-by-8.sourceforge.net/) algorithm.
 The crate provides the slice-by-8 algorithm that take the loopup table to use as parameter if you want to use your own.
 The crate also provides the CRC32 (Polynomial `0x04c11db7` ) available in `slice_by_8::crc32` and the CRC32c (Polynomial `0x1EDC6F41` ) in `slice_by_8::crc32c`.
+CRC32c hash can use CRC32c intrinsics if enabled. You can enable intrinsic version on `x86_64` target_arch by enabling `sse4.2` target_feature or on `aarch64` target_arch by enabling `crc` target_feature.
 
 ## Usage
 
@@ -74,8 +75,3 @@ Improvement are based on :
 * [Stephan Brumme Fast CRC32](https://create.stephan-brumme.com/crc32/)
 * [Redis CRC Speed Improvements](https://matt.sh/redis-crcspeed)
 * [Unreal Engine 4](https://github.com/EpicGames/UnrealEngine/)
-
-## TODO
-
-* [ ] ARM intrinsics version
-* [ ] Intel intrinsics version
