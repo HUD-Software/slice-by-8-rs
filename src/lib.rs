@@ -1,5 +1,6 @@
 #![doc=include_str!("../README.md")]
 #![no_std]
+#![feature(stdsimd)]
 
 mod algorithm;
 pub use algorithm::generate_table;
