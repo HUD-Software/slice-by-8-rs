@@ -6,7 +6,7 @@ edition = "2021"
 license = "MIT"
 description = "Rust improved implementation of the Intel Slice-By-8 algorithm."
 repository = "https://github.com/HUD-Software/slice-by-8"  
-keywords = ["intel", "hash", "crc", "gamedev"]
+keywords = ["hash", "string", "gamedev", "hasher", "hashmap"]
 categories = ["algorithms", "no-std"]
 
 [build-dependencies]
