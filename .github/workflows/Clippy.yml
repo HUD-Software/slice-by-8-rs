@@ -3,7 +3,17 @@ name: Clippy
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  clippy:
+  clippy-portable:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Setup Rust
+      run: rustup component add clippy
+    - name: Run Clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+
+  clippy-x86-64-sse:
     runs-on: ubuntu-latest
     env:
       RUSTFLAGS: "-Ctarget-feature=+sse4.2"
@@ -14,4 +24,17 @@ jobs:
     - name: Setup Rust
       run: rustup component add clippy
     - name: Run Clippy
-      run: cargo clippy --all-targets --all-features -- -D warnings
+      run: cargo clippy --target=x86_64-unknown-linux-gnu --all-features -- -D warnings
+
+  clippy-aarch64-crc:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-Ctarget-feature=+crc"
+      RUSTDOCFLAGS: "-Ctarget-feature=+crc"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Setup Rust
+      run: rustup component add clippy
+    - name: Run Clippy
+      run: cargo clippy --target=aarch64-unknown-linux-gnu --all-features -- -D warnings
