@@ -1,0 +1,17 @@
+name: Clippy
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-Ctarget-feature=+sse4.2"
+      RUSTDOCFLAGS: "-Ctarget-feature=+sse4.2"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Setup Rust
+      run: rustup component add clippy
+    - name: Run Clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
