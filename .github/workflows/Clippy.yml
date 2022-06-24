@@ -3,7 +3,7 @@ name: Clippy
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  clippy_portable:
+  clippy-portable:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -13,7 +13,7 @@ jobs:
     - name: Run Clippy
       run: cargo clippy --all-targets --all-features -- -D warnings
 
-  clippy_sse:
+  clippy-sse:
     runs-on: ubuntu-latest
     env:
       RUSTFLAGS: "-Ctarget-feature=+sse4.2"
@@ -26,7 +26,7 @@ jobs:
     - name: Run Clippy
       run: cargo clippy --all-targets --all-features -- -D warnings
 
-  clippy_crc:
+  clippy-crc:
       runs-on: ubuntu-latest
     env:
       RUSTFLAGS: "-Ctarget-feature=+crc"
