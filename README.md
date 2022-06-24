@@ -4,7 +4,11 @@ Rust improved implementation of the [Slice-by-8](http://slicing-by-8.sourceforge
 
 Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 
-[![Build](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml) [![Test](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml) [![codecov](https://codecov.io/gh/HUD-Software/slice-by-8/branch/main/graph/badge.svg?token=KG7SEUBDUF)](https://codecov.io/gh/HUD-Software/slice-by-8) [![docs.rs](https://img.shields.io/docsrs/slice-by-8?style=plastic)](https://docs.rs/slice-by-8/latest/cityhash_sys/)
+***Status***
+
+[![Build](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Build.yml) [![Clippy](https://img.shields.io/github/workflow/status/HUD-Software/slice-by-8/Clippy?label=Clippy&style=plastic)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Clippy.yml) [![docs.rs](https://img.shields.io/docsrs/slice-by-8?style=plastic)](https://docs.rs/slice-by-8/latest/cityhash_sys/)
+
+[![Test](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8/actions/workflows/Test.yml) [![codecov](https://codecov.io/gh/HUD-Software/slice-by-8/branch/main/graph/badge.svg?token=KG7SEUBDUF)](https://codecov.io/gh/HUD-Software/slice-by-8)
 
 ## Introduction
 

@@ -98,8 +98,8 @@ mod tests {
         assert_eq!(hasher.finish(), hash_free_function as u64);
 
         // Second hash is equivalent to city_hash_64_with_seed with seed that is hash key of the first hash
-        let hash_free_function = crc32c::slice_by_8_with_seed(&HASH_ME, hash_free_function);
-        hasher.write(&HASH_ME);
+        let hash_free_function = crc32c::slice_by_8_with_seed(HASH_ME, hash_free_function);
+        hasher.write(HASH_ME);
         assert_eq!(hasher.finish(), hash_free_function as u64);
     }
 
