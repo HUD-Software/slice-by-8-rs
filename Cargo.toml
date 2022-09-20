@@ -1,11 +1,11 @@
 [package]
-name = "slice-by-8"
-version = "1.0.2"
+name = "hud-slice-by-8"
+version = "1.0.3"
 authors = ["Julian LALU"]
 edition = "2021"
 license = "MIT"
-description = "Rust improved implementation of the Intel Slice-By-8 algorithm."
-repository = "https://github.com/HUD-Software/slice-by-8"  
+description = "HUD Software's Rust improved implementation of the Intel Slice-By-8 algorithm."
+repository = "https://github.com/HUD-Software/slice-by-8-rs"  
 keywords = ["hash", "string", "gamedev", "hasher", "hashmap"]
 categories = ["algorithms", "no-std"]
 
