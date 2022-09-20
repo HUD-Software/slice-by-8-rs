@@ -1,5 +1,5 @@
 [package]
-name = "hud-slice-by-8"
+name = "slice-by-8"
 version = "1.0.3"
 authors = ["Julian LALU"]
 edition = "2021"
