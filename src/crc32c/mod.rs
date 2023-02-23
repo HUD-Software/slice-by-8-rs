@@ -406,7 +406,7 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32) -> u32 {
 
     // Process eight bytes at once (Slicing-by-8)
     let process_8_bytes_at_once =
-        |acc: u32, byte: &u64| unsafe { core::arch::aarch64::__crc32cd(acc, *byte) as u32 };
+        |acc: u32, byte: &u64| unsafe { core::arch::aarch64::__crc32cd(acc, *byte) };
 
     crc = shorts.iter().fold(crc, process_8_bytes_at_once);
 
