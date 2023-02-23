@@ -1,4 +1,9 @@
-# Slice-by-8 [![Crates.io](https://img.shields.io/crates/v/slice-by-8?style=plastic)](https://crates.io/crates/slice-by-8) [![Crates.io](https://img.shields.io/crates/l/slice-by-8?style=plastic)](https://choosealicense.com/licenses/mit/)
+<div align="center">
+  <h1>Slice-by-8
+
+  [![Crates.io](https://img.shields.io/crates/v/slice-by-8?logo=Docs.rs&style=flat-square)](https://crates.io/crates/slice-by-8) [![License](https://img.shields.io/crates/l/slice-by-8?style=flat-square)](https://choosealicense.com/licenses/mit/)
+  </h1>
+</div>
 
 Rust improved implementation of the [Slice-by-8](http://slicing-by-8.sourceforge.net/) intel algorithm from the paper "*A Systematic Approach to building High Performance, Software-based, CRC Generators By Intel Researche and Development*"
 
@@ -6,9 +11,21 @@ Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 
 ***Status***
 
-[![Build](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Build.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Build.yml) [![Clippy](https://img.shields.io/github/workflow/status/HUD-Software/slice-by-8-rs/Clippy?label=Clippy&style=plastic)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Clippy.yml) [![docs.rs](https://img.shields.io/docsrs/slice-by-8?style=plastic)](https://docs.rs/slice-by-8/latest/slice-by-8/)
+[![Build](https://img.shields.io/github/actions/workflow/status/hud-software/slice-by-8-rs/Build.yml?label=Build&logo=Rust&logoColor=lightgrey&style=flat-square)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Build.yml)
+[![Clippy](https://img.shields.io/github/actions/workflow/status/hud-software/slice-by-8-rs/Clippy.yml?label=Clippy&logo=Rust&logoColor=lightgrey&style=flat-square)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Clippy.yml)
+[![docs.rs](https://img.shields.io/docsrs/slice-by-8/latest?label=Docs&logo=Docs.rs&logoColor=lightgrey&style=flat-square)](https://docs.rs/slice-by-8/1.0.4/slice_by_8/)
+[![Test](https://img.shields.io/github/actions/workflow/status/hud-software/slice-by-8-rs/Test.yml?label=Tests&logo=Rust&logoColor=lightgrey&style=flat-square)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Test.yml)
+[![codecov](https://img.shields.io/codecov/c/github/hud-software/slice-by-8-rs?label=Codecov&logo=Codecov&logoColor=lightgrey&style=flat-square&token=LTEI8LUT5R)](https://codecov.io/gh/HUD-Software/slice-by-8-rs)
 
-[![Test](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Test.yml/badge.svg)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Test.yml) [![codecov](https://codecov.io/gh/HUD-Software/slice-by-8/branch/main/graph/badge.svg?token=KG7SEUBDUF)](https://codecov.io/gh/HUD-Software/slice-by-8)
+**_Table of contents_**
+
+1. [Introduction](#introduction)
+2. [Usage](#usage)
+    1. [Using Hasher](#using-hasher)
+    2. [Using slice-by-8 functions](#using-slice-by-8-functions)
+    3. [Using your own lookup table](#using-your-own_lookup_table)
+3. [Generate Lookup table](#generate-lookup-table)
+3. [Performance](#performance)
 
 ## Introduction
 
