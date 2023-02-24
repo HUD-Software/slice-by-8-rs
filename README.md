@@ -3,8 +3,11 @@
 
   [![Crates.io](https://img.shields.io/crates/v/slice-by-8?logo=Docs.rs&style=flat-square)](https://crates.io/crates/slice-by-8) [![License](https://img.shields.io/crates/l/slice-by-8?style=flat-square)](https://choosealicense.com/licenses/mit/)
   </h1>
-</div>
+  
+  > **WARNING**: This crate is no more maintained, use [hud-slice-by-8](https://crates.io/crates/hud-slice-by-8) instead
 
+</div>
+---
 Rust improved implementation of the [Slice-by-8](http://slicing-by-8.sourceforge.net/) intel algorithm from the paper "*A Systematic Approach to building High Performance, Software-based, CRC Generators By Intel Researche and Development*"
 
 Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
