@@ -39,7 +39,7 @@ CRC32c hash can use CRC32c intrinsics if enabled. You can enable intrinsic versi
 ### Using Hasher
 
 ```rust
-use slice_by_8::crc32::CRC32BuildHasher;
+use hud_slice_by_8::crc32::CRC32BuildHasher;
 use std::collections::HashMap;
 const KEY: &str = "hash";
 const VALUE: &str = "me!";
@@ -56,7 +56,7 @@ assert_eq!(map.get(&KEY), Some(&VALUE));
 Slice-by-8 provides functions to hash slice of bytes.
 
 ```rust
-use slice_by_8::crc32c;
+use hud_slice_by_8::crc32c;
 
 const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 assert_eq!(crc32c::slice_by_8(HASH_ME), 0x9EE6EF25);
@@ -69,9 +69,9 @@ assert_eq!(crc32c::slice_by_8(HASH_ME), 0x9EE6EF25);
 You own lookup table must be `[[u32; 256]; 8]`.
 
 ```rust
-use slice_by_8::slice_by_8;
+use hud_slice_by_8::slice_by_8;
 
-let my_lookup_table: [[u32; 256]; 8] = slice_by_8::generate_table(slice_by_8::crc32::POLYNOMIAL);
+let my_lookup_table: [[u32; 256]; 8] = hud_slice_by_8::generate_table(hud_slice_by_8::crc32::POLYNOMIAL);
 const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 
 assert_eq!(slice_by_8(HASH_ME, &my_lookup_table), 0x4C2750BD);
@@ -82,8 +82,8 @@ assert_eq!(slice_by_8(HASH_ME, &my_lookup_table), 0x4C2750BD);
 The crate provide `generate_table` function to generate a lookup table from a polynomial.
 
 ```rust
-use slice_by_8::generate_table;
-use slice_by_8::{crc32, crc32c};
+use hud_slice_by_8::generate_table;
+use hud_slice_by_8::{crc32, crc32c};
 
 assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
 assert_eq!(generate_table(crc32c::POLYNOMIAL), crc32c::LOOKUP_TABLE);

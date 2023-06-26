@@ -11,9 +11,9 @@ use core::mem::MaybeUninit;
 ///
 /// # Example
 /// ```
-/// use slice_by_8::slice_by_8;
+/// use hud_slice_by_8::slice_by_8;
 /// 
-/// let my_lookup_table: [[u32; 256]; 8] = slice_by_8::generate_table(slice_by_8::crc32::POLYNOMIAL);
+/// let my_lookup_table: [[u32; 256]; 8] = hud_slice_by_8::generate_table(hud_slice_by_8::crc32::POLYNOMIAL);
 /// const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 ///
 /// assert_eq!(slice_by_8(HASH_ME, &my_lookup_table), 0x4C2750BD);
@@ -28,9 +28,9 @@ pub fn slice_by_8(buf: &[u8], lookup_table: &[[u32; 256]; 8]) -> u32 {
 ///
 /// # Example
 /// ```
-/// use slice_by_8::slice_by_8_with_seed;
+/// use hud_slice_by_8::slice_by_8_with_seed;
 /// 
-/// let my_lookup_table: [[u32; 256]; 8] = slice_by_8::generate_table(slice_by_8::crc32::POLYNOMIAL);
+/// let my_lookup_table: [[u32; 256]; 8] = hud_slice_by_8::generate_table(hud_slice_by_8::crc32::POLYNOMIAL);
 /// const HASH_ME: &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 ///
 /// assert_eq!(slice_by_8_with_seed(HASH_ME, 123456789, &my_lookup_table), 0xEADB5034);
@@ -88,7 +88,7 @@ pub fn slice_by_8_with_seed(buf: &[u8], seed: u32, lookup_table: &[[u32; 256]; 8
 ///
 /// # Example
 /// ```
-/// use slice_by_8::{crc32,generate_table};
+/// use hud_slice_by_8::{crc32,generate_table};
 ///
 /// assert_eq!(generate_table(crc32::POLYNOMIAL), crc32::LOOKUP_TABLE);
 /// ```

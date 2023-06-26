@@ -5,7 +5,7 @@ pub use hasher::{CRC32CBuildHasher, CRC32CHasher};
 /// 
 /// # Example
 /// ```
-/// use slice_by_8::crc32c;
+/// use hud_slice_by_8::crc32c;
 /// assert_eq!(crc32c::POLYNOMIAL, 0x1EDC6F41)
 /// ```
 pub const POLYNOMIAL: u32 = 0x1EDC6F41;
@@ -14,7 +14,7 @@ pub const POLYNOMIAL: u32 = 0x1EDC6F41;
 /// 
 /// # Example
 /// ```
-/// use slice_by_8::{crc32c,generate_table};
+/// use hud_slice_by_8::{crc32c,generate_table};
 ///
 /// assert_eq!(generate_table(crc32c::POLYNOMIAL), crc32c::LOOKUP_TABLE);
 /// ```
@@ -338,7 +338,7 @@ pub const LOOKUP_TABLE: [[u32; 256]; 8] = [
 ///
 /// # Example
 /// ```
-/// use slice_by_8::crc32c;
+/// use hud_slice_by_8::crc32c;
 ///
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 /// assert_eq!(crc32c::slice_by_8(HASH_ME), 0x9EE6EF25);
@@ -353,7 +353,7 @@ pub fn slice_by_8(buf: &[u8]) -> u32 {
 ///
 /// # Example
 /// ```
-/// use slice_by_8::crc32c;
+/// use hud_slice_by_8::crc32c;
 ///
 /// const HASH_ME : &[u8] = b"abcdefghijklmnopqrstuvwxyz";
 /// assert_eq!(crc32c::slice_by_8_with_seed(HASH_ME, 123456789), 0x183AE562);

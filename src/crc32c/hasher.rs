@@ -20,7 +20,7 @@ impl Hasher for CRC32CHasher {
     /// # Example
     ///
     /// ```
-    /// use slice_by_8::crc32c::CRC32CHasher;
+    /// use hud_slice_by_8::crc32c::CRC32CHasher;
     /// use core::hash::Hasher;
     ///
     /// let hasher = CRC32CHasher::with_seed(0x4C2750BD);
@@ -35,7 +35,7 @@ impl Hasher for CRC32CHasher {
     /// # Example
     ///
     /// ```
-    /// use slice_by_8::crc32c::CRC32CHasher;
+    /// use hud_slice_by_8::crc32c::CRC32CHasher;
     /// use core::hash::Hasher;
     ///
     /// let mut hasher = CRC32CHasher::default();
