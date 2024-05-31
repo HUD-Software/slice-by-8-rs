@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Slice-by-8
 
-  [![Crates.io](https://img.shields.io/crates/v/slice-by-8?logo=Docs.rs&style=flat-square)](https://crates.io/crates/slice-by-8) [![License](https://img.shields.io/crates/l/slice-by-8?style=flat-square)](https://choosealicense.com/licenses/mit/)
+  [![Crates.io](https://img.shields.io/crates/v/hud-slice-by-8?logo=Docs.rs&style=flat-square)](https://crates.io/crates/hud-slice-by-8) [![License](https://img.shields.io/crates/l/hud-slice-by-8?style=flat-square)](https://choosealicense.com/licenses/mit/)
   </h1>
 </div>
 
@@ -13,7 +13,7 @@ Slice-by-8 do not load the standard library (a.k.a `#![no_std]`)
 
 [![Build](https://img.shields.io/github/actions/workflow/status/hud-software/slice-by-8-rs/Build.yml?label=Build&logo=Rust&logoColor=lightgrey&style=flat-square)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Build.yml)
 [![Clippy](https://img.shields.io/github/actions/workflow/status/hud-software/slice-by-8-rs/Clippy.yml?label=Clippy&logo=Rust&logoColor=lightgrey&style=flat-square)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Clippy.yml)
-[![docs.rs](https://img.shields.io/docsrs/slice-by-8/latest?label=Docs&logo=Docs.rs&logoColor=lightgrey&style=flat-square)](https://docs.rs/slice-by-8/1.0.4/slice_by_8/)
+[![docs.rs](https://img.shields.io/docsrs/hud-slice-by-8/latest?label=Docs&logo=Docs.rs&logoColor=lightgrey&style=flat-square)](https://docs.rs/slice-by-8/1.0.4/slice_by_8/)
 [![Test](https://img.shields.io/github/actions/workflow/status/hud-software/slice-by-8-rs/Test.yml?label=Tests&logo=Rust&logoColor=lightgrey&style=flat-square)](https://github.com/HUD-Software/slice-by-8-rs/actions/workflows/Test.yml)
 [![codecov](https://img.shields.io/codecov/c/github/hud-software/slice-by-8-rs?label=Codecov&logo=Codecov&logoColor=lightgrey&style=flat-square&token=LTEI8LUT5R)](https://codecov.io/gh/HUD-Software/slice-by-8-rs)
 
