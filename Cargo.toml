@@ -1,6 +1,6 @@
 [package]
 name = "hud-slice-by-8"
-version = "1.0.8"
+version = "1.0.9"
 authors = ["Julian LALU"]
 edition = "2021"
 license = "MIT"
